@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SpendMaster</string>
+
+    <!-- navigatin -->
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_transactions">Transactions</string>
+    <string name="title_budget">Budget</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_add_transaction">Add Transaction</string>
+    <string name="title_edit_transaction">Edit Transaction</string>
+    <string name="title_profile">Profile</string>
+
+    <!-- transaction -->
+    <string name="hint_title">Title</string>
+    <string name="hint_amount">Amount</string>
+    <string name="hint_category">Category</string>
+    <string name="hint_date">Date</string>
+    <string name="hint_type">Type</string>
+    <string name="hint_currency">Select Currency</string>
+    <string name="type_income">Income</string>
+    <string name="type_expense">Expense</string>
+    <string name="no_transactions">No transactions yet</string>
+
+    <!-- budget -->
+    <string name="hint_monthly_budget">Monthly Budget</string>
+    <string name="budget_warning">Budget Warning: Less than 20% remaining</string>
+    <string name="budget_exceeded">Budget Exceeded!</string>
+    <string name="budget_progress">%1$d%% used</string>
+    <string name="budget_progress_with_currency">%1$d%% used (%2$s)</string>
+
+    <!-- settings -->
+    <string name="settings_currency">Currency</string>
+    <string name="settings_backup">Backup Data</string>
+    <string name="settings_restore">Restore Data</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_export">Export Data</string>
+    <string name="export_json">Export</string>
+    <string name="export_success">Data exported successfully to: %1$s</string>
+    <string name="export_error">Failed to export data: %1$s</string>
+
+    <!-- Msg -->
+    <string name="msg_transaction_saved">Transaction saved successfully</string>
+    <string name="msg_transaction_deleted">Transaction deleted successfully</string>
+    <string name="msg_budget_updated">Budget updated successfully</string>
+    <string name="msg_backup_success">Data backed up successfully</string>
+    <string name="msg_restore_success">Data restored successfully</string>
+    <string name="msg_error">An error occurred</string>
+
+    <!-- for btns -->
+    <string name="btn_save">Save</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_add">Add</string>
+    <string name="btn_edit">Edit</string>
+    <string name="delete">Delete</string>
+
+    <!--  -->
+    <string name="total_balance">Total Balance</string>
+    <string name="income">Income</string>
+    <string name="expense">Expense</string>
+    <string name="save">Save</string>
+    <string name="backup">Backup</string>
+    <string name="restore">Restore</string>
+    <string name="add_transaction">Add Transaction</string>
+    <string name="edit_transaction">Edit Transaction</string>
+    <string name="delete_transaction">Delete transaction</string>
+
+    <string-array name="transaction_categories">
+        <item>Salary</item>
+        <item>Freelance</item>
+        <item>Investments</item>
+        <item>Gifts</item>
+        <item>Food</item>
+        <item>Transportation</item>
+        <item>Housing</item>
+        <item>Utilities</item>
+        <item>Entertainment</item>
+        <item>Shopping</item>
+        <item>Healthcare</item>
+        <item>Education</item>
+        <item>Other</item>
+    </string-array>
+
+    <string name="currency_usd">USD ($)</string>
+    <string name="currency_eur">EUR (€)</string>
+    <string name="currency_gbp">GBP (£)</string>
+    <string name="currency_jpy">JPY (¥)</string>
+    <string name="currency_inr">INR (₹)</string>
+    <string name="currency_aud">AUD (A$)</string>
+    <string name="currency_cad">CAD (C$)</string>
+    <string name="currency_lkr">LKR (රු)</string>
+    <string name="currency_cny">CNY (¥)</string>
+    <string name="currency_sgd">SGD (S$)</string>
+    <string name="currency_myr">MYR (RM)</string>
+    <string name="currency_thb">THB (฿)</string>
+    <string name="currency_idr">IDR (Rp)</string>
+    <string name="currency_php">PHP (₱)</string>
+    <string name="currency_vnd">VND (₫)</string>
+    <string name="currency_krw">KRW (₩)</string>
+    <string name="currency_aed">AED (د.إ)</string>
+    <string name="currency_sar">SAR (﷼)</string>
+    <string name="currency_qar">QAR (﷼)</string>
+
+    <string name="onboarding_image">Onboarding illustration</string>
+
+    <!-- onbord screen -->
+    <string name="onboarding_title_1">Smart Money Tracking </string>
+    <string name="onboarding_desc_1">Monitor your daily spending and earnings effortlessly.</string>
+    
+    <string name="onboarding_title_2">See Your Money Story </string>
+    <string name="onboarding_desc_2">Gain valuable insights into your spending patterns with comprehensive and detailed analytics.</string>
+    
+    <string name="onboarding_title_3">Stay on Budget </string>
+    <string name="onboarding_desc_3">We\'ll give you a heads up before you overspend</string>
+    
+    <string name="onboarding_title_4">Your Money, Your Privacy </string>
+    <string name="onboarding_desc_4">Keep your financial data safe and private, securely stored on your device.</string>
+
+    <string name="profile_picture">Your Profile Pic </string>
+    <string name="edit_profile">Update Your Info ✏</string>
+    <string name="logout">See You Later! </string>
+
+    <!-- sing in up -->
+    <string name="uname">Email</string>
+    <string name="upass">Password</string>
+    <string name="log">Login</string>
+    <string name="signn">Sign Up</string>
+    <string name="acc">Don\'t have an account?</string>
+</resources>

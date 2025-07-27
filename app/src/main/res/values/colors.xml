@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="green_500">#FF4CAF50</color>
+    <color name="red_500">#FFF44336</color>
+    <color name="orange_500">#FFFF9800</color>
+
+    <!-- charts -->
+    <color name="chart_color_1">#FF6200EE</color>
+    <color name="chart_color_2">#FF03DAC5</color>
+    <color name="chart_color_3">#FF3700B3</color>
+    <color name="chart_color_4">#FF018786</color>
+    <color name="chart_color_5">#FFBB86FC</color>
+
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="onBackground">#000000</color>
+    <color name="onSurface">#000000</color>
+
+    <!-- onboard -->
+    <color name="onboarding_bg_1">#B8D7D3</color>
+    <color name="onboarding_bg_2">#E8F5E9</color>
+    <color name="onboarding_bg_3">#E3F2FD</color>
+
+    <color name="income_color">#4CAF50</color>
+    <color name="expense_color">#F44336</color>
+
+    <!--fragment background -->
+    <color name="dashboard_background">#F5F5F5</color>
+    <color name="transaction_background">#E8EAF6</color>
+    <color name="budget_background">#E0F2F1</color>
+    <color name="settings_background">#F3E5F5</color>
+    <color name="profile_background">#FFF3E0</color>
+</resources>

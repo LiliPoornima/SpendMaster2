@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#B39DDB</color>
+    <color name="purple_500">#7C4DFF</color>
+    <color name="purple_700">#651FFF</color>
+    <color name="teal_200">#64FFDA</color>
+    <color name="teal_700">#1DE9B6</color>
+    <color name="black">#E0E0E0</color>
+    <color name="white">#181A20</color>
+    <color name="green_500">#00E676</color>
+    <color name="red_500">#FF5252</color>
+    <color name="orange_500">#FFB74D</color>
+
+    <!-- charts -->
+    <color name="chart_color_1">#7C4DFF</color>
+    <color name="chart_color_2">#64FFDA</color>
+    <color name="chart_color_3">#FFB74D</color>
+    <color name="chart_color_4">#00E676</color>
+    <color name="chart_color_5">#FF5252</color>
+
+    <color name="colorPrimary">#23243A</color>
+    <color name="colorAccent">#7C4DFF</color>
+    <color name="background">#181A20</color>
+    <color name="surface">#23243A</color>
+    <color name="onBackground">#F5F5F5</color>
+    <color name="onSurface">#E0E0E0</color>
+
+    <!-- fragment backgrounds -->
+    <color name="dashboard_background">#23243A</color>
+    <color name="transaction_background">#23243A</color>
+    <color name="budget_background">#23243A</color>
+    <color name="settings_background">#23243A</color>
+    <color name="profile_background">#23243A</color>
+</resources> 
