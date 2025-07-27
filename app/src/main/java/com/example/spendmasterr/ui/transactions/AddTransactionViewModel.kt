@@ -5,7 +5,6 @@ package com.example.spendmasterr.ui.transactions
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.spendmasterr.data.repository.TransactionRepository
 import com.example.spendmasterr.model.Transaction
 import com.example.spendmasterr.model.TransactionType
 import java.util.Date
@@ -13,29 +12,29 @@ import java.util.UUID
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import com.example.spendmasterr.util.TransactionPrefsManager
 
-class AddTransactionViewModel(private val repository: TransactionRepository) : ViewModel() {
+class AddTransactionViewModel(private val context: android.content.Context) : ViewModel() {
+    private val prefsManager = TransactionPrefsManager(context)
     private val _saveResult = MutableLiveData<SaveResult>()
     val saveResult: LiveData<SaveResult> = _saveResult
 
     fun addTransaction(description: String, amount: Double, category: String, type: TransactionType, date: Date) {
-        viewModelScope.launch {
-            try {
-                val transaction = Transaction(
-                    id = UUID.randomUUID().toString(),
-                    amount = amount,
-                    description = description,
-                    type = type,
-                    category = category,
-                    date = date,
-                    isRecurring = false,
-                    recurringPeriod = null
-                )
-                repository.addTransaction(transaction)
-                _saveResult.value = SaveResult.Success
-            } catch (e: Exception) {
-                _saveResult.value = SaveResult.Error(e.message ?: "Failed to save transaction")
-            }
+        try {
+            val transaction = Transaction(
+                id = UUID.randomUUID().toString(),
+                amount = amount,
+                description = description,
+                type = type,
+                category = category,
+                date = date,
+                isRecurring = false,
+                recurringPeriod = null
+            )
+            prefsManager.addTransaction(transaction)
+            _saveResult.value = SaveResult.Success
+        } catch (e: Exception) {
+            _saveResult.value = SaveResult.Error(e.message ?: "Failed to save transaction")
         }
     }
 
@@ -45,12 +44,12 @@ class AddTransactionViewModel(private val repository: TransactionRepository) : V
     }
 }
 
-class AddTransactionViewModelFactory(private val repository: TransactionRepository) :
+class AddTransactionViewModelFactory(private val context: android.content.Context) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AddTransactionViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return AddTransactionViewModel(repository) as T
+            return AddTransactionViewModel(context) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

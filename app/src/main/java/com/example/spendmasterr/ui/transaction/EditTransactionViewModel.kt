@@ -5,39 +5,37 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.spendmasterr.data.Result
-import com.example.spendmasterr.data.repository.TransactionRepository
+import com.example.spendmasterr.util.TransactionPrefsManager
 import com.example.spendmasterr.model.Transaction
 import kotlinx.coroutines.launch
 
-class EditTransactionViewModel(private val repository: TransactionRepository, private val categoriesProvider: () -> List<String>) : ViewModel() {
-    private val _updateResult = MutableLiveData<Result<Unit>>()
-    val updateResult: LiveData<Result<Unit>> = _updateResult
+class EditTransactionViewModel(private val context: android.content.Context, private val categoriesProvider: () -> List<String>) : ViewModel() {
+    private val prefsManager = TransactionPrefsManager(context)
+    private val _updateResult = MutableLiveData<com.example.spendmasterr.data.Result<Unit>>()
+    val updateResult: LiveData<com.example.spendmasterr.data.Result<Unit>> = _updateResult
 
     fun getCategories(): List<String> {
         return categoriesProvider()
     }
 
-    fun updateTransaction(transaction: Transaction) {
-        viewModelScope.launch {
-            try {
-                repository.updateTransaction(transaction)
-                _updateResult.value = Result.Success(Unit)
-            } catch (e: Exception) {
-                _updateResult.value = Result.Error(e)
-            }
+    fun updateTransaction(transaction: com.example.spendmasterr.model.Transaction) {
+        try {
+            prefsManager.updateTransaction(transaction)
+            _updateResult.value = com.example.spendmasterr.data.Result.Success(Unit)
+        } catch (e: Exception) {
+            _updateResult.value = com.example.spendmasterr.data.Result.Error(e)
         }
     }
 }
 
 class EditTransactionViewModelFactory(
-    private val repository: TransactionRepository,
+    private val context: android.content.Context,
     private val categoriesProvider: () -> List<String>
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EditTransactionViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return EditTransactionViewModel(repository, categoriesProvider) as T
+            return EditTransactionViewModel(context, categoriesProvider) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

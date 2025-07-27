@@ -2,9 +2,6 @@ package com.example.spendmasterr.util
 
 import android.content.Context
 import android.os.Environment
-import com.example.spendmasterr.data.database.SpendMasterDatabase
-import com.example.spendmasterr.data.repository.BudgetRepository
-import com.example.spendmasterr.data.repository.TransactionRepository
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -20,6 +17,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.example.spendmasterr.util.BudgetPrefsManager
+import com.example.spendmasterr.util.TransactionPrefsManager
 
 class ExportManager(private val context: Context) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
@@ -27,17 +26,13 @@ class ExportManager(private val context: Context) {
     fun exportToJson(): Result<String> {
         Log.d("EXPORT_TEST", "exportToJson called")
         return try {
-            val db = SpendMasterDatabase.getDatabase(context)
-            Log.d("EXPORT_TEST", "Database instance obtained")
-            val transactionRepository = TransactionRepository(db.transactionDao())
-            val budgetRepository = BudgetRepository(db.budgetDao())
+            val transactionRepository = TransactionPrefsManager(context)
+            val budgetRepository = BudgetPrefsManager(context)
             var transactions: List<com.example.spendmasterr.model.Transaction> = emptyList()
             try {
                 Log.d("EXPORT_TEST", "Before collecting transactions Flow")
                 transactions = runBlocking {
-                    transactionRepository.getAllTransactions().first().also {
-                        Log.d("EXPORT_TEST", "Loaded transactions with first(), size: ${it.size}")
-                    }
+                    transactionRepository.getTransactions()
                 }
                 Log.d("EXPORT_TEST", "Transactions loaded: ${transactions.size}")
             } catch (e: Exception) {
@@ -88,13 +83,12 @@ class ExportManager(private val context: Context) {
             val jsonString = restoreFile.readText()
             Log.d("EXPORT_TEST", "Read file content, length: ${jsonString.length}")
             val json = JSONObject(jsonString)
-            val db = SpendMasterDatabase.getDatabase(context)
-            val transactionRepository = TransactionRepository(db.transactionDao())
-            val budgetRepository = BudgetRepository(db.budgetDao())
+            val transactionRepository = TransactionPrefsManager(context)
+            val budgetRepository = BudgetPrefsManager(context)
             val transactionsJson = json.getJSONArray("transactions")
             val monthlyBudget = json.getDouble("monthlyBudget")
             // Restore budget
-            runBlocking { budgetRepository.setBudget(monthlyBudget) }
+            runBlocking { budgetRepository.saveBudget(monthlyBudget) }
             Log.d("EXPORT_TEST", "Budget restored: $monthlyBudget")
             // Restore transactions
             runBlocking {

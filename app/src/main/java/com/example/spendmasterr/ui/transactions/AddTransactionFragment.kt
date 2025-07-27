@@ -17,17 +17,12 @@ import com.example.spendmasterr.databinding.FragmentAddTransactionBinding
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
-import com.example.spendmasterr.data.database.SpendMasterDatabase
-import com.example.spendmasterr.data.repository.TransactionRepository
+import androidx.lifecycle.ViewModelProvider
 
 class AddTransactionFragment : Fragment() {
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: AddTransactionViewModel by viewModels {
-        val db = SpendMasterDatabase.getDatabase(requireContext())
-        val repository = TransactionRepository(db.transactionDao())
-        AddTransactionViewModelFactory(repository)
-    }
+    private var viewModel: AddTransactionViewModel? = null
     private val calendar = Calendar.getInstance()
     private val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
 
@@ -99,7 +94,7 @@ class AddTransactionFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.saveResult.observe(viewLifecycleOwner) { result ->
+        viewModel?.saveResult?.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is AddTransactionViewModel.SaveResult.Success -> {
                     Toast.makeText(requireContext(), "Transaction saved successfully", Toast.LENGTH_SHORT).show()
@@ -144,7 +139,7 @@ class AddTransactionFragment : Fragment() {
                 binding.editTextAmount.error = "Amount must be greater than 0"
                 return
             }
-            viewModel.addTransaction(title, amount, category, type, date)
+            viewModel?.addTransaction(title, amount, category, type, date)
         } catch (e: NumberFormatException) {
             binding.editTextAmount.error = "Invalid amount"
         }

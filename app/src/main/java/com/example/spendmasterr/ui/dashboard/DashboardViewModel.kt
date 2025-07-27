@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spendmasterr.data.repository.TransactionRepository
 import com.example.spendmasterr.model.Transaction
 import com.example.spendmasterr.model.TransactionType
+import com.example.spendmasterr.util.TransactionPrefsManager
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class DashboardViewModel(private val repository: TransactionRepository) : ViewModel() {
+class DashboardViewModel(private val context: android.content.Context) : ViewModel() {
+    private val prefsManager = TransactionPrefsManager(context)
     private val _totalBalance = MutableLiveData<Double>()
     val totalBalance: LiveData<Double> = _totalBalance
 
@@ -37,21 +38,18 @@ class DashboardViewModel(private val repository: TransactionRepository) : ViewMo
     }
 
     fun loadDashboardData() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _error.value = null
-            try {
-                repository.getAllTransactions().collectLatest { transactions ->
-                    _transactions.value = transactions
-                    calculateTotals(transactions)
-                    calculateCategorySpending(transactions)
-                }
-            } catch (e: Exception) {
-                _error.value = "Failed to load dashboard data: ${e.message}"
-                resetData()
-            } finally {
-                _isLoading.value = false
-            }
+        _isLoading.value = true
+        _error.value = null
+        try {
+            val transactions = prefsManager.getTransactions()
+            _transactions.value = transactions
+            calculateTotals(transactions)
+            calculateCategorySpending(transactions)
+        } catch (e: Exception) {
+            _error.value = "Failed to load dashboard data: ${e.message}"
+            resetData()
+        } finally {
+            _isLoading.value = false
         }
     }
 

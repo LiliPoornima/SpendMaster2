@@ -16,8 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.spendmasterr.R
 import com.example.spendmasterr.databinding.FragmentSettingsBinding
-import com.example.spendmasterr.data.database.SpendMasterDatabase
-import com.example.spendmasterr.data.repository.CurrencyRepository
 import com.example.spendmasterr.util.ExportManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,9 +59,7 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        val db = SpendMasterDatabase.getDatabase(requireContext())
-        val repository = CurrencyRepository(db.currencyDao())
-        viewModel = ViewModelProvider(this, SettingsViewModelFactory(repository))
+        viewModel = ViewModelProvider(this, SettingsViewModelFactory(requireContext()))
             .get(SettingsViewModel::class.java)
         exportManager = ExportManager(requireContext())
         return binding.root

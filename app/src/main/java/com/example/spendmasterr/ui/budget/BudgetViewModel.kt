@@ -5,16 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.spendmasterr.data.repository.BudgetRepository
-import com.example.spendmasterr.data.repository.CurrencyRepository
-import com.example.spendmasterr.data.repository.TransactionRepository
+import com.example.spendmasterr.util.TransactionPrefsManager
 import java.util.Calendar
 import java.util.Date
 import kotlinx.coroutines.launch
 
 class BudgetViewModel(
-    private val repository: BudgetRepository,
-    private val currencyRepository: CurrencyRepository
+    private val context: android.content.Context
 ) : ViewModel() {
     private val _budget = MutableLiveData<Double>(0.0)
     val budget: LiveData<Double> = _budget
@@ -28,44 +25,37 @@ class BudgetViewModel(
     }
 
     private fun loadBudget() {
-        viewModelScope.launch {
-            try {
-                _budget.value = repository.getBudget()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _budget.value = 0.0
-            }
-        }
+        val budgetPrefs = com.example.spendmasterr.util.BudgetPrefsManager(context)
+        _budget.value = budgetPrefs.getBudget()
     }
 
     private fun loadCurrency() {
-        viewModelScope.launch {
-            _currencyCode.value = currencyRepository.getCurrency()
-        }
+        val currencyPrefs = com.example.spendmasterr.util.CurrencyPrefsManager(context)
+        _currencyCode.value = currencyPrefs.getCurrency()
     }
 
     fun updateBudget(newBudget: Double) {
-        viewModelScope.launch {
-            try {
-                repository.setBudget(newBudget)
-                _budget.value = newBudget
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+        val budgetPrefs = com.example.spendmasterr.util.BudgetPrefsManager(context)
+        budgetPrefs.saveBudget(newBudget)
+        _budget.value = newBudget
     }
 
-    suspend fun getMonthlyExpenses(transactionRepository: TransactionRepository): Double {
+    fun updateCurrency(newCurrency: String) {
+        val currencyPrefs = com.example.spendmasterr.util.CurrencyPrefsManager(context)
+        currencyPrefs.saveCurrency(newCurrency)
+        _currencyCode.value = newCurrency
+    }
+
+    fun getMonthlyExpenses(): Double {
+        val transactionPrefs = com.example.spendmasterr.util.TransactionPrefsManager(context)
         val now = Date()
         val calendar = Calendar.getInstance()
         calendar.time = now
         calendar.set(Calendar.DAY_OF_MONTH, 1)
         val startOfMonth = calendar.time
-        return transactionRepository.getTotalAmountByTypeAndDateRange(
-            com.example.spendmasterr.model.TransactionType.EXPENSE,
-            startOfMonth,
-            now
-        )
+        val transactions = transactionPrefs.getTransactions()
+        return transactions.filter { it.type.name == "EXPENSE" && it.date >= startOfMonth && it.date <= now }
+            .sumOf { it.amount }
     }
 
     private fun formatCurrency(amount: Double): String {
@@ -77,11 +67,11 @@ class BudgetViewModel(
         }
     }
 
-    class Factory(private val repository: BudgetRepository, private val currencyRepository: CurrencyRepository) : ViewModelProvider.Factory {
+    class Factory(private val context: android.content.Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return BudgetViewModel(repository, currencyRepository) as T
+                return BudgetViewModel(context) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

@@ -14,9 +14,8 @@ import com.example.spendmasterr.R
 import com.example.spendmasterr.MainActivity
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import com.example.spendmasterr.data.database.SpendMasterDatabase
-import com.example.spendmasterr.data.repository.BudgetRepository
-import com.example.spendmasterr.data.repository.TransactionRepository
+import com.example.spendmasterr.util.BudgetPrefsManager
+import com.example.spendmasterr.util.TransactionPrefsManager
 import kotlinx.coroutines.*
 
 class BudgetNotificationService : Service() {
@@ -73,22 +72,19 @@ class BudgetNotificationService : Service() {
     private fun checkBudgetStatus() {
         serviceScope.launch {
             try {
-                val db = SpendMasterDatabase.getDatabase(this@BudgetNotificationService)
-                val budgetRepository = BudgetRepository(db.budgetDao())
-                val transactionRepository = TransactionRepository(db.transactionDao())
-                val monthlyBudget = budgetRepository.getBudget()
+                val budgetPrefs = BudgetPrefsManager(this@BudgetNotificationService)
+                val transactionPrefs = TransactionPrefsManager(this@BudgetNotificationService)
+                val monthlyBudget = budgetPrefs.getBudget()
                 if (monthlyBudget <= 0) return@launch
                 val now = java.util.Date()
                 val calendar = java.util.Calendar.getInstance()
                 calendar.time = now
                 calendar.set(java.util.Calendar.DAY_OF_MONTH, 1)
                 val startOfMonth = calendar.time
-                var monthlyExpenses = 0.0
-                transactionRepository.getAllTransactions().collect { transactions ->
-                    monthlyExpenses = transactions.filter { it.type.name == "EXPENSE" && it.date >= startOfMonth && it.date <= now }
-                        .sumOf { it.amount }
-                }
-                val percentageUsed = (monthlyExpenses / monthlyBudget * 100).toInt()
+                val transactions = transactionPrefs.getTransactions()
+                val monthlyExpenses = transactions.filter { it.type.name == "EXPENSE" && it.date >= startOfMonth && it.date <= now }
+                    .sumOf { it.amount }
+                val percentageUsed = if (monthlyBudget > 0) (monthlyExpenses / monthlyBudget * 100).toInt() else 0
                 when {
                     percentageUsed >= 100 -> showBudgetAlert(
                         "Budget Exceeded!",

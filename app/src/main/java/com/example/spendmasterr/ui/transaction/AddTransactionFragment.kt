@@ -16,8 +16,6 @@ import com.example.spendmasterr.model.TransactionType
 import com.example.spendmasterr.databinding.FragmentAddTransactionBinding
 import java.util.UUID
 import java.util.Date
-import com.example.spendmasterr.data.database.SpendMasterDatabase
-import com.example.spendmasterr.data.repository.TransactionRepository
 
 class AddTransactionFragment : Fragment() {
     private var _binding: FragmentAddTransactionBinding? = null
@@ -36,9 +34,7 @@ class AddTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        val db = SpendMasterDatabase.getDatabase(requireContext())
-        val repository = TransactionRepository(db.transactionDao())
-        val factory = AddTransactionViewModelFactory(repository)
+        val factory = AddTransactionViewModelFactory(requireContext())
         viewModel = ViewModelProvider(this, factory).get(AddTransactionViewModel::class.java)
 
         setupUI()

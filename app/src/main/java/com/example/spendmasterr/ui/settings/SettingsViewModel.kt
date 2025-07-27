@@ -4,10 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spendmasterr.data.repository.CurrencyRepository
+import com.example.spendmasterr.util.CurrencyPrefsManager
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(private val repository: CurrencyRepository) : ViewModel() {
+class SettingsViewModel(private val context: android.content.Context) : ViewModel() {
+    private val prefsManager = CurrencyPrefsManager(context)
     private val _currency = MutableLiveData<String>()
     val currency: LiveData<String> = _currency
 
@@ -16,16 +17,12 @@ class SettingsViewModel(private val repository: CurrencyRepository) : ViewModel(
     }
 
     private fun loadCurrency() {
-        viewModelScope.launch {
-            _currency.value = repository.getCurrency()
-        }
+        _currency.value = prefsManager.getCurrency()
     }
 
     fun updateCurrency(newCurrency: String) {
-        viewModelScope.launch {
-            repository.setCurrency(newCurrency)
-            _currency.value = newCurrency
-        }
+        prefsManager.saveCurrency(newCurrency)
+        _currency.value = newCurrency
     }
 
     fun setSelectedCurrency(currency: String) {

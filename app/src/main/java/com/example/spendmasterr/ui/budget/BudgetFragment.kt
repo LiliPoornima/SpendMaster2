@@ -14,10 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.spendmasterr.R
-import com.example.spendmasterr.data.database.SpendMasterDatabase
-import com.example.spendmasterr.data.repository.BudgetRepository
-import com.example.spendmasterr.data.repository.CurrencyRepository
-import com.example.spendmasterr.data.repository.TransactionRepository
 import com.example.spendmasterr.databinding.FragmentBudgetBinding
 import com.example.spendmasterr.service.BudgetNotificationService
 import com.example.spendmasterr.util.CurrencyFormatter
@@ -49,13 +45,9 @@ class BudgetFragment : Fragment() {
     ): View {
         try {
             _binding = FragmentBudgetBinding.inflate(inflater, container, false)
-            val db = SpendMasterDatabase.getDatabase(requireContext())
-            val repository = BudgetRepository(db.budgetDao())
-            val currencyRepository = CurrencyRepository(db.currencyDao())
-            val transactionRepository = TransactionRepository(db.transactionDao())
             viewModel = ViewModelProvider(
                 this,
-                BudgetViewModel.Factory(repository, currencyRepository)
+                BudgetViewModel.Factory(requireContext())
             )[BudgetViewModel::class.java]
             notificationHelper = NotificationHelper(requireContext())
 
@@ -145,9 +137,7 @@ class BudgetFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 notificationHelper.showBudgetNotification(budget)
                 // Check and notify for budget thresholds
-                val db = com.example.spendmasterr.data.database.SpendMasterDatabase.getDatabase(requireContext())
-                val transactionRepository = com.example.spendmasterr.data.repository.TransactionRepository(db.transactionDao())
-                val monthlyExpenses = viewModel.getMonthlyExpenses(transactionRepository)
+                val monthlyExpenses = viewModel.getMonthlyExpenses()
                 notificationHelper.showBudgetAlert(budget, monthlyExpenses)
             }
         } catch (e: NumberFormatException) {
@@ -223,28 +213,24 @@ class BudgetFragment : Fragment() {
 
     private fun updateBudgetProgress() {
         val monthlyBudget = viewModel.budget.value ?: 0.0
-        val db = SpendMasterDatabase.getDatabase(requireContext())
-        val transactionRepository = TransactionRepository(db.transactionDao())
-        viewLifecycleOwner.lifecycleScope.launch {
-            val monthlyExpenses = viewModel.getMonthlyExpenses(transactionRepository)
-            val progress = if (monthlyBudget > 0) {
-                (monthlyExpenses / monthlyBudget * 100).toInt()
-            } else 0
-            binding.progressBudget.progress = progress
-            binding.tvBudgetStatus.text = getString(R.string.budget_progress_with_currency, progress, currentCurrencyCode)
-            // Check and notify for budget thresholds
-            notificationHelper.showBudgetAlert(monthlyBudget, monthlyExpenses)
+        val monthlyExpenses = viewModel.getMonthlyExpenses()
+        val progress = if (monthlyBudget > 0) {
+            (monthlyExpenses / monthlyBudget * 100).toInt()
+        } else 0
+        binding.progressBudget.progress = progress
+        binding.tvBudgetStatus.text = getString(R.string.budget_progress_with_currency, progress, currentCurrencyCode)
+        // Check and notify for budget thresholds
+        notificationHelper.showBudgetAlert(monthlyBudget, monthlyExpenses)
 
-            // Show in-app notification using Toast
-            val message = when {
-                progress >= 100 -> "You've exceeded your budget!"
-                progress >= 90 -> "Warning: Over 90% of your budget used!"
-                progress >= 70 -> "Alert: Over 70% of your budget used!"
-                else -> null
-            }
-            message?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-            }
+        // Show in-app notification using Toast
+        val message = when {
+            progress >= 100 -> "You've exceeded your budget!"
+            progress >= 90 -> "Warning: Over 90% of your budget used!"
+            progress >= 70 -> "Alert: Over 70% of your budget used!"
+            else -> null
+        }
+        message?.let {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
     }
 

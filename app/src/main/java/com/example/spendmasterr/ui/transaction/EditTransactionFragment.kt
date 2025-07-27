@@ -14,8 +14,6 @@ import com.example.spendmasterr.model.Transaction
 import com.example.spendmasterr.model.TransactionType
 import com.example.spendmasterr.databinding.FragmentEditTransactionBinding
 import android.widget.ArrayAdapter
-import com.example.spendmasterr.data.database.SpendMasterDatabase
-import com.example.spendmasterr.data.repository.TransactionRepository
 
 class EditTransactionFragment : Fragment() {
     private var _binding: FragmentEditTransactionBinding? = null
@@ -35,8 +33,6 @@ class EditTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        val db = SpendMasterDatabase.getDatabase(requireContext())
-        val repository = TransactionRepository(db.transactionDao())
         val categoriesProvider = {
             listOf(
                 "Salary",
@@ -50,7 +46,7 @@ class EditTransactionFragment : Fragment() {
                 "Other"
             )
         }
-        viewModel = ViewModelProvider(this, EditTransactionViewModelFactory(repository, categoriesProvider))
+        viewModel = ViewModelProvider(this, EditTransactionViewModelFactory(requireContext(), categoriesProvider))
             .get(EditTransactionViewModel::class.java)
 
         setupUI()

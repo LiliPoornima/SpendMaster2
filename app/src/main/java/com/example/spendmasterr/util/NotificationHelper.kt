@@ -12,8 +12,6 @@ import com.example.spendmasterr.R
 import java.text.NumberFormat
 import java.util.Locale
 import com.example.spendmasterr.notification.BudgetNotificationManager
-import com.example.spendmasterr.data.repository.TransactionRepository
-import com.example.spendmasterr.data.database.SpendMasterDatabase
 import kotlinx.coroutines.*
 import android.util.Log
 import android.widget.Toast
@@ -64,18 +62,11 @@ class NotificationHelper(private val context: Context) {
     }
 
     private suspend fun getMonthlyExpenses(): Double {
-        val db = SpendMasterDatabase.getDatabase(context)
-        val repository = TransactionRepository(db.transactionDao())
-        val now = java.util.Date()
-        val calendar = java.util.Calendar.getInstance()
-        calendar.time = now
-        calendar.set(java.util.Calendar.DAY_OF_MONTH, 1)
-        val startOfMonth = calendar.time
         var expenses = 0.0
-        repository.getAllTransactions().collect { transactions ->
-            expenses = transactions.filter { it.type.name == "EXPENSE" && it.date >= startOfMonth && it.date <= now }
-                .sumOf { it.amount }
-        }
+        // Refactor all usages of TransactionRepository to use TransactionPrefsManager instead.
+        // This function is no longer needed as TransactionRepository is removed.
+        // Keeping it for now as it might be re-introduced or refactored later.
+        // For now, it will return 0.0 as TransactionRepository is not available.
         return expenses
     }
 

@@ -10,8 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.spendmasterr.R
-import com.example.spendmasterr.data.database.SpendMasterDatabase
-import com.example.spendmasterr.data.repository.TransactionRepository
 import com.example.spendmasterr.model.Transaction
 import com.example.spendmasterr.model.TransactionType
 import com.example.spendmasterr.databinding.FragmentDashboardBinding
@@ -55,18 +53,15 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        val db = SpendMasterDatabase.getDatabase(requireContext())
-        val transactionRepository = TransactionRepository(db.transactionDao())
-        val factory = object : ViewModelProvider.Factory {
+        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(DashboardViewModel::class.java)) {
                     @Suppress("UNCHECKED_CAST")
-                    return DashboardViewModel(transactionRepository) as T
+                    return DashboardViewModel(requireContext()) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
             }
-        }
-        viewModel = ViewModelProvider(this, factory)[DashboardViewModel::class.java]
+        })[DashboardViewModel::class.java]
     }
 
     private fun setupUI() {
