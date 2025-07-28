@@ -19,22 +19,14 @@ class AddTransactionViewModel(private val context: android.content.Context) : Vi
     private val _saveResult = MutableLiveData<SaveResult>()
     val saveResult: LiveData<SaveResult> = _saveResult
 
-    fun addTransaction(description: String, amount: Double, category: String, type: TransactionType, date: Date) {
-        try {
-            val transaction = Transaction(
-                id = UUID.randomUUID().toString(),
-                amount = amount,
-                description = description,
-                type = type,
-                category = category,
-                date = date,
-                isRecurring = false,
-                recurringPeriod = null
-            )
-            prefsManager.addTransaction(transaction)
-            _saveResult.value = SaveResult.Success
-        } catch (e: Exception) {
-            _saveResult.value = SaveResult.Error(e.message ?: "Failed to save transaction")
+    fun addTransaction(transaction: Transaction) {
+        viewModelScope.launch {
+            try {
+                TransactionPrefsManager(context).addTransaction(transaction)
+                _saveResult.value = SaveResult.Success
+            } catch (e: Exception) {
+                _saveResult.value = SaveResult.Error(e.message ?: "Failed to save transaction")
+            }
         }
     }
 

@@ -37,6 +37,8 @@ class AddTransactionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this, AddTransactionViewModelFactory(requireContext()))
+            .get(AddTransactionViewModel::class.java)
         setupUI()
         setupClickListeners()
         observeViewModel()
@@ -139,7 +141,17 @@ class AddTransactionFragment : Fragment() {
                 binding.editTextAmount.error = "Amount must be greater than 0"
                 return
             }
-            viewModel?.addTransaction(title, amount, category, type, date)
+            val transaction = Transaction(
+                id = UUID.randomUUID().toString(),
+                amount = amount,
+                description = title,
+                type = type,
+                category = category,
+                date = date,
+                isRecurring = false,
+                recurringPeriod = null
+            )
+            viewModel?.addTransaction(transaction)
         } catch (e: NumberFormatException) {
             binding.editTextAmount.error = "Invalid amount"
         }
